@@ -1,0 +1,49 @@
+name: Validate Bicep Templates
+
+on:
+  push:
+    branches: [ main, copilot/** ]
+    paths:
+      - 'infra/**'
+      - 'modules/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'infra/**'
+      - 'modules/**'
+
+jobs:
+  validate:
+    name: Validate Bicep Syntax
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bicep
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az bicep version
+
+      - name: Validate Main Template - Dev
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az bicep build --file ./infra/main.bicep
+            echo "✅ Development template syntax is valid"
+
+      - name: Validate All Module Templates
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            for file in modules/*.bicep; do
+              echo "Validating $file..."
+              az bicep build --file "$file"
+              echo "✅ $file is valid"
+            done
+
+      - name: Summary
+        run: |
+          echo "🎉 All Bicep templates validated successfully!"
