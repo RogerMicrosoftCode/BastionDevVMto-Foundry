@@ -228,6 +228,4 @@ print(f"✅ Conexión privada exitosa: {agent.name}")
 
 ---
 
-**Versión:** 1.0  
 **Fecha:** Noviembre 2025  
-**Autor:** Equipo de Arquitectura Cloud
