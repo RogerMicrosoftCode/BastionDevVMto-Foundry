@@ -70,20 +70,6 @@ resource mlWorkspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01' =
   kind: 'Hub'
 }
 
-// Application Insights for monitoring
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: '${foundryName}-insights'
-  location: location
-  tags: tags
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    RetentionInDays: 30
-    publicNetworkAccessForIngestion: 'Enabled'
-    publicNetworkAccessForQuery: 'Enabled'
-  }
-}
-
 // Log Analytics Workspace for Application Insights
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: '${foundryName}-logs'
@@ -97,8 +83,8 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   }
 }
 
-// Link Application Insights to Log Analytics
-resource appInsightsWorkspace 'Microsoft.Insights/components@2020-02-02' = {
+// Application Insights for monitoring (linked to Log Analytics)
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: '${foundryName}-insights'
   location: location
   tags: tags
@@ -107,6 +93,8 @@ resource appInsightsWorkspace 'Microsoft.Insights/components@2020-02-02' = {
     Application_Type: 'web'
     WorkspaceResourceId: logAnalytics.id
     RetentionInDays: 30
+    publicNetworkAccessForIngestion: 'Enabled'
+    publicNetworkAccessForQuery: 'Enabled'
   }
 }
 

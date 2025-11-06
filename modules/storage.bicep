@@ -104,6 +104,13 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-05-01' = if (e
   }
 }
 
+// Private DNS Zone for Blob Storage (if private endpoint enabled)
+resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (enablePrivateEndpoint) {
+  name: 'privatelink.blob.${environment().suffixes.storage}'
+  location: 'global'
+  tags: tags
+}
+
 // Private DNS Zone Group for Blob Storage (if private endpoint enabled)
 resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-05-01' = if (enablePrivateEndpoint) {
   parent: privateEndpoint
@@ -118,13 +125,6 @@ resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
       }
     ]
   }
-}
-
-// Private DNS Zone for Blob Storage (if private endpoint enabled)
-resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (enablePrivateEndpoint) {
-  name: 'privatelink.blob.${environment().suffixes.storage}'
-  location: 'global'
-  tags: tags
 }
 
 // Outputs
