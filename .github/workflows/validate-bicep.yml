@@ -12,6 +12,9 @@ on:
       - 'infra/**'
       - 'modules/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate Bicep Syntax
