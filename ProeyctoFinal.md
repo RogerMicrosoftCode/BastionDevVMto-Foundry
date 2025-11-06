@@ -537,21 +537,42 @@ ssh -p 2222 azureuser@127.0.0.1 \
 ## 🔒 Validaciones de Seguridad
 
 **Checklist final:**
+
+**Checklist de infraestructura:**
 - [ ] VM no tiene IP pública
 - [ ] No hay Internet outbound (excepto Azure services)
 - [ ] Bastion es único punto HTTP/HTTPS
 - [ ] VPN Gateway configurado (si aplica)
 - [ ] VNet Peering habilitado (si Hub-Spoke)
-- [ ] Private Endpoints para Foundry
-- [ ] NSGs aplicados a todas subnets
-- [ ] Managed Identity en VM
-- [ ] Roles RBAC asignados
+- [ ] VNets con CIDR optimizados (/27, /28)
+- [ ] Private Endpoints configurados para Foundry
+- [ ] NSGs aplicados correctamente a todas las subnets
+- [ ] Managed Identity habilitada en VM
+- [ ] Roles RBAC asignados a Managed Identity
 - [ ] DNS privado resuelve correctamente
 - [ ] SSH keys configuradas (no passwords)
-- [ ] Túnel SSH funciona
+- [ ] Túnel SSH funciona correctamente
 - [ ] Conexión VPN establecida (si aplica)
-- [ ] GatewaySubnet sin NSG
-- [ ] VNets con CIDR optimizados (/27, /28)
+- [ ] Tráfico entre VNets funciona via peering
+- [ ] GatewaySubnet NO tiene NSG (recomendado)
+
+**Checklist de herramientas de desarrollo:**
+- [ ] Python 3.11+ instalado
+- [ ] pip funcionando correctamente
+- [ ] Docker y Docker Compose instalados
+- [ ] Usuario agregado al grupo docker
+- [ ] Azure CLI instalado y funcional
+- [ ] Git instalado
+- [ ] Managed Identity autenticando correctamente
+- [ ] Paquetes Python instalados (langchain, azure-ai-projects, etc.)
+- [ ] requirements.txt actualizado
+- [ ] Estructura de proyecto creada
+- [ ] Variables de entorno configuradas (.env)
+- [ ] Docker image se construye sin errores
+- [ ] Docker Compose ejecuta la aplicación
+- [ ] APIapp responde en puerto 8000
+- [ ] Endpoints /health y / responden correctamente
+
 
 **Pruebas de conectividad:**
 ```bash
