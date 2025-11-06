@@ -193,16 +193,6 @@ print(f"✅ Conexión privada exitosa: {agent.name}")
 - [ ] Roles RBAC asignados
 - [ ] DNS privado resuelve correctamente
 
----
-
-## 💰 Costos Aproximados (México Central)
-
-| Recurso | Costo/mes USD |
-|---------|---------------|
-| VM Standard_D4s_v3 | ~$150 |
-| Azure Bastion Standard | ~$140 |
-| VNet + Private Endpoints | ~$10 |
-| **TOTAL** | **~$300/mes** |
 
 ---
 
@@ -235,13 +225,6 @@ print(f"✅ Conexión privada exitosa: {agent.name}")
 
 ---
 
-## 🔄 Próximos Pasos
-
-1. Revisar y aprobar arquitectura con equipo de seguridad
-2. Provisionar recursos siguiendo el orden especificado
-3. Validar conectividad privada con Foundry
-4. Documentar procedimientos de acceso para el equipo
-5. Configurar monitoreo y alertas en Azure Monitor
 
 ---
 
