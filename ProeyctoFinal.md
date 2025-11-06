@@ -99,11 +99,7 @@ VNet Spoke: "vnet-foundry-dev" (10.1.0.0/24)
 |------------|---------------|------------------|-----------------|
 | VMs Dev | 1-10 usuarios | /28 | 11 |
 | VMs Dev | 11-25 usuarios | /27 | 27 |
-| VMs Dev | 26-60 usuarios | /26 | 59 |
-| Private Endpoints | 1-10 servicios | /28 | 11 |
-| Private Endpoints | 11-25 servicios | /27 | 27 |
-| AKS Small | 10-30 pods | /26 | 59 |
-| AKS Medium | 31-120 pods | /25 | 123 |
+
 
 ### 3️⃣ **Configurar VNet Peering**
 ```bash
@@ -212,22 +208,7 @@ IP Pública: Crear nueva (solo para Bastion)
 5. Click "Connect"
 ```
 
-#### Opción 2: SSH desde Azure CLI (Nativo)
-```bash
-# Instalar extensión de Bastion
-az extension add --name bastion
-
-# Conectar por SSH nativo
-az network bastion ssh \
-  --name bastion-foundry \
-  --resource-group rg-foundry-secure-dev \
-  --target-resource-id /subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Compute/virtualMachines/{vm-name} \
-  --auth-type ssh-key \
-  --username azureuser \
-  --ssh-key ~/.ssh/id_rsa
-```
-
-#### Opción 3: SSH Tunneling para herramientas locales
+#### Opción 2: SSH Tunneling para herramientas locales
 ```bash
 # Crear túnel SSH para usar VS Code Remote, PyCharm, etc.
 az network bastion tunnel \
@@ -249,14 +230,7 @@ Host bastionvm
   IdentityFile ~/.ssh/id_rsa
 ```
 
-#### Opción 4: RDP para Windows VM
-```bash
-# Desde Azure CLI
-az network bastion rdp \
-  --name bastion-foundry \
-  --resource-group rg-foundry-secure-dev \
-  --target-resource-id /subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Compute/virtualMachines/{vm-name}
-```
+
 
 ### 7️⃣ **Configurar Foundry Managed Network**
 
@@ -536,15 +510,15 @@ Host bastion-foundry-vm
 4. Desarrollar directamente en VM
 ```
 
-### SSH Tunneling para Jupyter Notebook
+### SSH Tunneling para APP DESAROLLADA Y PRUEBAS
 ```bash
 # Iniciar túnel en background
 ./bastion-tunnel.sh &
 
-# SSH y lanzar Jupyter
-ssh -p 2222 azureuser@127.0.0.1 'jupyter notebook --no-browser --port=8888'
+# SSH y lanzar APP
+ssh -p 2222 azureuser@127.0.0.1 'appdevelop --no-browser --port=8888'
 
-# Forward puerto Jupyter
+# Forward puerto APP
 ssh -p 2222 -L 8888:localhost:8888 azureuser@127.0.0.1
 
 # Abrir: http://localhost:8888
@@ -669,7 +643,7 @@ curl -I https://management.azure.com
 - 🔧 Tools locales (kubectl, etc.)
 
 **Ideal para:**
-- Equipos 10+ usuarios
+- Equipos 10 usuarios
 - Oficina corporativa completa
 - Alta disponibilidad
 - Mejor performance
@@ -704,9 +678,6 @@ curl -I https://management.azure.com
 |-----------|------|-------------|-------------|---------|
 | 1-6 recursos | /28 | 16 | 11 | Private Endpoints |
 | 7-22 recursos | /27 | 32 | 27 | VMs pequeño equipo |
-| 23-54 recursos | /26 | 64 | 59 | Bastion, AKS small |
-| 55-118 recursos | /25 | 128 | 123 | VMs equipo grande |
-| 119+ recursos | /24 | 256 | 251 | Múltiples subnets |
 
 **Nota:** Azure reserva 5 IPs por subnet:
 - Primera IP (network address)
@@ -738,52 +709,6 @@ curl -I https://management.azure.com
 
 ---
 
-## 🛠️ Troubleshooting
-
-### VPN no conecta:
-```bash
-# Verificar estado
-az network vnet-gateway show \
-  --name vpn-foundry-gateway \
-  --resource-group rg-foundry-secure-dev
-
-# Ver logs
-az network vnet-gateway list-bgp-peer-status \
-  --name vpn-foundry-gateway \
-  --resource-group rg-foundry-secure-dev
-
-# Reset (última opción)
-az network vnet-gateway reset \
-  --name vpn-foundry-gateway \
-  --resource-group rg-foundry-secure-dev
-```
-
-### Bastion SSH falla:
-```bash
-# Verificar NSG permite AzureBastionSubnet
-# Verificar VM tiene SSH habilitado (port 22)
-# Verificar SSH key correcta
-
-# Test
-az network bastion ssh \
-  --name bastion-foundry \
-  --resource-group rg-foundry-secure-dev \
-  --target-resource-id $VM_ID \
-  --auth-type password \
-  --username azureuser
-```
-
-### Private Endpoint no resuelve:
-```bash
-# Verificar DNS privado
-nslookup endpoint.services.ai.azure.com
-
-# Debe resolver a 10.x.x.x
-# Si no, verificar Private DNS Zone linked a VNet
-```
-
 ---
 
-**Versión:** 2.0  
 **Fecha:** Noviembre 2025  
-**Autor:** Equipo de Arquitectura Cloud
